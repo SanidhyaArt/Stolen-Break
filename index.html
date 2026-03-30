@@ -24,6 +24,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stolen Break — F1 Batch Checker</title>
+  <!-- @vercel/analytics (plain HTML integration via window.va queue shim) -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
   <style>
@@ -613,6 +618,8 @@
       const prefix = parseInt(raw.substring(0, 4), 10);
 
       if (prefix >= STOLEN_START && prefix <= STOLEN_END) {
+        // Track custom event — result: stolen
+        window.va('event', { name: 'BatchChecked', result: 'stolen', prefix: String(prefix) });
         showResult(
           'danger',
           '🚨 POTENTIAL STOLEN CARGO',
@@ -620,6 +627,8 @@
           true
         );
       } else {
+        // Track custom event — result: safe
+        window.va('event', { name: 'BatchChecked', result: 'safe', prefix: String(prefix) });
         showResult(
           'safe',
           '✅ VERIFIED SAFE',
