@@ -1,713 +1,169 @@
-<!--
-  Stolen Break — F1 Batch Checker
-  MIT License
-  Copyright (c) 2026 Sanidhya
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  THE SOFTWARE.
--->
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stolen Break — F1 Batch Checker</title>
-  <!-- @vercel/analytics (plain HTML integration via window.va queue shim) -->
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --red: #EC2227;
-      --red-dark: #b5181c;
-      --white: #F5F5F0;
-      --black: #0A0A0A;
-      --gray: #1A1A1A;
-      --stripe: #111111;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background-color: var(--black);
-      color: var(--white);
-      font-family: 'Nunito', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Racing stripes background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        -55deg,
-        transparent,
-        transparent 60px,
-        rgba(232,0,45,0.025) 60px,
-        rgba(232,0,45,0.025) 62px
-      );
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .content { position: relative; z-index: 1; }
-
-    /* TOP FLAG STRIPE */
-    .flag-bar {
-      height: 6px;
-      background: repeating-linear-gradient(
-        90deg,
-        var(--black) 0px, var(--black) 12px,
-        var(--white) 12px, var(--white) 24px
-      );
-      width: 100%;
-    }
-
-    /* RED ACCENT TOP BAR */
-    .red-bar {
-      height: 4px;
-      background: var(--red);
-      width: 100%;
-    }
-
-    /* HEADER */
-    header {
-      padding: 2rem 1.5rem 1rem;
-      text-align: center;
-    }
-
-    .tag-line {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 0.4rem;
-    }
-
-    h1 {
-      font-size: clamp(2.8rem, 10vw, 5.5rem);
-      font-weight: 900;
-      font-style: italic;
-      line-height: 0.9;
-      text-transform: uppercase;
-      letter-spacing: -0.02em;
-    }
-
-    h1 span.red { color: var(--red); }
-
-    .subtitle {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #666;
-      letter-spacing: 0.12em;
-      margin-top: 0.75rem;
-      text-transform: uppercase;
-    }
-
-    /* DIVIDER */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0 1.5rem;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-    .divider-line { flex: 1; height: 1px; background: #2a2a2a; }
-    .divider-dot { width: 6px; height: 6px; background: var(--red); transform: rotate(45deg); flex-shrink: 0; }
-
-    /* MAIN CARD */
-    .card {
-      max-width: 480px;
-      margin: 1.5rem auto 0;
-      padding: 0 1.25rem;
-    }
-
-    /* INPUT AREA */
-    .input-label {
-      font-size: 0.8rem;
-      letter-spacing: 0.15em;
-      color: #777;
-      text-transform: uppercase;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .input-wrapper {
-      position: relative;
-    }
-
-    .input-wrapper::before {
-      content: '▶';
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--red);
-      font-size: 0.7rem;
-      pointer-events: none;
-    }
-
-    #batchInput {
-      width: 100%;
-      background: #111;
-      border: 1px solid #2a2a2a;
-      border-left: 3px solid var(--red);
-      color: var(--white);
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 1.6rem;
-      letter-spacing: 0.15em;
-      padding: 1rem 1rem 1rem 2.2rem;
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      -webkit-appearance: none;
-      border-radius: 0;
-      text-transform: uppercase;
-    }
-
-    #batchInput::placeholder {
-      color: #333;
-      letter-spacing: 0.1em;
-    }
-
-    #batchInput:focus {
-      border-color: var(--red);
-      background: #161616;
-      box-shadow: 0 0 0 1px rgba(232,0,45,0.2), 0 4px 24px rgba(232,0,45,0.08);
-    }
-
-    /* Remove number input arrows */
-    #batchInput::-webkit-outer-spin-button,
-    #batchInput::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-    /* BUTTONS */
-    .btn-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 0.6rem;
-      margin-top: 0.75rem;
-    }
-
-    .btn-check {
-      background: var(--red);
-      color: var(--white);
-      border: none;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.85rem 1.5rem;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-check::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
-    }
-
-    .btn-check:hover { background: #f5373c; }
-    .btn-check:active { transform: scale(0.97); }
-
-    .btn-clear {
-      background: transparent;
-      color: #666;
-      border: 1px solid #2a2a2a;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.85rem 1rem;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .btn-clear:hover { color: var(--white); border-color: #555; }
-
-    /* RESULT BOX */
-    #resultBox {
-      margin-top: 1.25rem;
-      padding: 1.25rem 1.25rem 1.25rem 1.5rem;
-      border-left: 4px solid transparent;
-      background: #111;
-      display: none;
-      animation: slideIn 0.25s ease;
-      position: relative;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    #resultBox.danger {
-      border-left-color: var(--red);
-      background: rgba(232,0,45,0.06);
-    }
-
-    #resultBox.safe {
-      border-left-color: #00c853;
-      background: rgba(0,200,83,0.05);
-    }
-
-    .result-status {
-      font-size: clamp(1.3rem, 5vw, 1.7rem);
-      font-weight: 900;
-      font-style: italic;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      line-height: 1;
-      margin-bottom: 0.4rem;
-    }
-
-    .result-status.danger-text { color: var(--red); }
-    .result-status.safe-text { color: #00c853; }
-
-    .result-detail {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #666;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      line-height: 1.7;
-    }
-
-    .result-detail.danger-detail { color: #aa3333; }
-    .result-detail.safe-detail { color: #3a7a4a; }
-
-    /* SCANLINE BLINK on danger */
-    .scanline-danger {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 3px,
-        rgba(232,0,45,0.04) 3px,
-        rgba(232,0,45,0.04) 4px
-      );
-      pointer-events: none;
-      animation: scanBlink 1.5s steps(1) infinite;
-    }
-
-    @keyframes scanBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    /* CTA BUTTON */
-    .cta-wrap {
-      margin-top: 1.25rem;
-      display: none;
-    }
-
-    .cta-btn {
-      display: block;
-      width: 100%;
-      background: var(--white);
-      color: var(--black);
-      text-decoration: none;
-      text-align: center;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 1rem;
-      transition: background 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-btn::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 4px;
-      background: var(--red);
-    }
-
-    .cta-btn:hover { background: #ddd; }
-
-    .cta-sublabel {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #555;
-      letter-spacing: 0.08em;
-      text-align: center;
-      margin-top: 0.4rem;
-      text-transform: uppercase;
-    }
-
-    /* HOW IT WORKS */
-    .how-section {
-      max-width: 480px;
-      margin: 2rem auto 0;
-      padding: 0 1.25rem;
-    }
-
-    .how-title {
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      color: #555;
-      text-transform: uppercase;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .how-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.75rem;
-    }
-
-    .how-card {
-      background: #111;
-      border-top: 2px solid #222;
-      padding: 0.85rem 0.75rem;
-      text-align: center;
-    }
-
-    .how-num {
-      font-size: 1.6rem;
-      font-weight: 900;
-      font-style: italic;
-      color: var(--red);
-      line-height: 1;
-    }
-
-    .how-label {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #666;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-top: 0.3rem;
-      line-height: 1.5;
-    }
-
-    /* RANGE BADGE */
-    .range-badge {
-      max-width: 480px;
-      margin: 1.25rem auto 0;
-      padding: 0 1.25rem;
-    }
-
-    .range-inner {
-      background: #0f0f0f;
-      border: 1px solid #1e1e1e;
-      padding: 0.85rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .range-label {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      flex-shrink: 0;
-    }
-
-    .range-codes {
-      font-family: 'Nunito', sans-serif;
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--red);
-      letter-spacing: 0.05em;
-    }
-
-    /* FOOTER */
-    footer {
-      max-width: 480px;
-      margin: 2.5rem auto 0;
-      padding: 0 1.25rem 2rem;
-      text-align: center;
-    }
-
-    .footer-flag {
-      height: 3px;
-      background: repeating-linear-gradient(
-        90deg,
-        #222 0px, #222 8px,
-        #444 8px, #444 16px
-      );
-      margin-bottom: 1rem;
-    }
-
-    .footer-text {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #444;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      line-height: 2;
-    }
-
-    .footer-text a {
-      color: var(--red);
-      text-decoration: none;
-    }
-
-    .footer-text a:hover { text-decoration: underline; }
-
-    /* Pulse animation for the danger icon */
-    @keyframes pulse-red {
-      0%, 100% { text-shadow: 0 0 8px rgba(232,0,45,0.8); }
-      50% { text-shadow: 0 0 24px rgba(232,0,45,1), 0 0 48px rgba(232,0,45,0.4); }
-    }
-
-    .pulse-danger { animation: pulse-red 1.2s ease-in-out infinite; }
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.5">
+  <style type="text/css">
+    body {background-color: #0a0a0a}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #f2f3ec; -webkit-text-stroke: #f2f3ec}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #f2f3ec; -webkit-text-stroke: #f2f3ec; min-height: 15.0px}
+    span.s1 {font-kerning: none}
   </style>
 </head>
 <body>
-
-  <div class="flag-bar"></div>
-  <div class="red-bar"></div>
-
-  <div class="content">
-
-    <!-- HEADER -->
-    <header>
-      <p class="tag-line">⚑ Formula 1 × KitKat · 2026 Contraband Detector</p>
-      <h1>Stolen<br><span class="red">Break</span></h1>
-      <p class="subtitle">// Stolen F1 Batch Code Verifier //</p>
-    </header>
-
-    <!-- RANGE INFO -->
-    <div class="range-badge">
-      <div class="range-inner">
-        <span class="range-label">⚠ Stolen<br>Range</span>
-        <span class="range-codes">6085XXXXXX — 6095XXXXXX</span>
-      </div>
-    </div>
-
-    <!-- MAIN CHECKER CARD -->
-    <div class="card">
-
-      <div style="margin-top:1.5rem">
-        <label class="input-label" for="batchInput">Enter 10-Digit Batch Code</label>
-        <div class="input-wrapper">
-          <input
-            id="batchInput"
-            type="text"
-            maxlength="10"
-            placeholder="e.g. 6085123456"
-            autocomplete="off"
-            autocorrect="off"
-            spellcheck="false"
-            inputmode="text"
-          />
-        </div>
-        <div class="btn-row">
-          <button class="btn-check" onclick="checkCode()">▶ Run Check</button>
-          <button class="btn-clear" onclick="clearAll()">✕ Clear</button>
-        </div>
-      </div>
-
-      <!-- RESULT -->
-      <div id="resultBox">
-        <div id="scanlineEl" class="scanline-danger" style="display:none"></div>
-        <div id="resultStatus" class="result-status"></div>
-        <div id="resultDetail" class="result-detail"></div>
-      </div>
-
-      <!-- CTA -->
-      <div class="cta-wrap" id="ctaWrap">
-        <a
-          href="https://www.amazon.com/s?k=kitkat+chocolate+box&tag=kitkatheist-20"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="cta-btn"
-        >
-          🛒 Get a Guaranteed Legal Box (Amazon)
-        </a>
-        <p class="cta-sublabel">↑ affiliate link · supports this tool</p>
-      </div>
-
-    </div><!-- /card -->
-
-    <!-- HOW IT WORKS -->
-    <div class="how-section">
-      <div class="divider" style="padding:0; margin-bottom:1rem">
-        <div class="divider-line"></div>
-        <div class="divider-dot"></div>
-        <div class="divider-line"></div>
-      </div>
-      <p class="how-title">// How It Works //</p>
-      <div class="how-grid">
-        <div class="how-card">
-          <div class="how-num">01</div>
-          <div class="how-label">Find batch code on wrapper</div>
-        </div>
-        <div class="how-card">
-          <div class="how-num">02</div>
-          <div class="how-label">Enter full 10-digit code above</div>
-        </div>
-        <div class="how-card">
-          <div class="how-num">03</div>
-          <div class="how-label">Instant stolen range verdict</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer>
-      <div class="footer-flag"></div>
-      <p class="footer-text">
-        Built by <a href="#" target="_blank">Sanidhya</a><br>
-        For entertainment purposes only · Not affiliated with KitKat or Formula 1<br>
-        © 2026 · Stolen Break Batch Checker
-      </p>
-    </footer>
-
-  </div><!-- /content -->
-
-  <script>
-    const STOLEN_START = 6085;
-    const STOLEN_END   = 6095;
-
-    function checkCode() {
-      const raw = document.getElementById('batchInput').value.trim();
-      const resultBox    = document.getElementById('resultBox');
-      const resultStatus = document.getElementById('resultStatus');
-      const resultDetail = document.getElementById('resultDetail');
-      const scanlineEl   = document.getElementById('scanlineEl');
-      const ctaWrap      = document.getElementById('ctaWrap');
-
-      // Validate
-      if (!raw) {
-        flashInput();
-        return;
-      }
-
-      if (raw.length < 4) {
-        showResult('danger', '⚠ INVALID CODE', 'Enter at least 4 digits to identify batch prefix.', false);
-        ctaWrap.style.display = 'block';
-        return;
-      }
-
-      const prefix = parseInt(raw.substring(0, 4), 10);
-
-      if (prefix >= STOLEN_START && prefix <= STOLEN_END) {
-        // Track custom event — result: stolen
-        window.va('event', { name: 'BatchChecked', result: 'stolen', prefix: String(prefix) });
-        showResult(
-          'danger',
-          '🚨 POTENTIAL STOLEN CARGO',
-          `Batch prefix ${prefix} falls within the 2026 F1 KitKat theft range (6085–6095).\nDo NOT consume · Report to authorities.`,
-          true
-        );
-      } else {
-        // Track custom event — result: safe
-        window.va('event', { name: 'BatchChecked', result: 'safe', prefix: String(prefix) });
-        showResult(
-          'safe',
-          '✅ VERIFIED SAFE',
-          `Batch prefix ${prefix} is outside the stolen cargo range.\nYour KitKat appears to be from a legitimate supply chain.`,
-          false
-        );
-      }
-
-      ctaWrap.style.display = 'block';
-    }
-
-    function showResult(type, status, detail, showScanline) {
-      const resultBox    = document.getElementById('resultBox');
-      const resultStatus = document.getElementById('resultStatus');
-      const resultDetail = document.getElementById('resultDetail');
-      const scanlineEl   = document.getElementById('scanlineEl');
-
-      resultBox.className = '';
-      resultBox.classList.add(type);
-
-      resultStatus.className = 'result-status';
-      resultDetail.className = 'result-detail';
-
-      if (type === 'danger') {
-        resultStatus.classList.add('danger-text', 'pulse-danger');
-        resultDetail.classList.add('danger-detail');
-        scanlineEl.style.display = showScanline ? 'block' : 'none';
-      } else {
-        resultStatus.classList.add('safe-text');
-        resultDetail.classList.add('safe-detail');
-        scanlineEl.style.display = 'none';
-      }
-
-      resultStatus.textContent = status;
-      resultDetail.textContent = detail;
-
-      // Re-trigger animation
-      resultBox.style.display = 'none';
-      void resultBox.offsetWidth;
-      resultBox.style.display = 'block';
-    }
-
-    function clearAll() {
-      document.getElementById('batchInput').value = '';
-      const resultBox = document.getElementById('resultBox');
-      resultBox.style.display = 'none';
-      resultBox.className = '';
-      document.getElementById('ctaWrap').style.display = 'none';
-      document.getElementById('batchInput').focus();
-    }
-
-    function flashInput() {
-      const input = document.getElementById('batchInput');
-      input.style.borderColor = '#ff4444';
-      setTimeout(() => { input.style.borderColor = ''; }, 600);
-      input.focus();
-    }
-
-    // Enter key support
-    document.getElementById('batchInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') checkCode();
-    });
-
-    // Auto-check on 10 digits entered
-    document.getElementById('batchInput').addEventListener('input', function() {
-      if (this.value.trim().length === 10) {
-        setTimeout(checkCode, 200);
-      }
-    });
-  </script>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"/&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Stolen Break — F1 Batch Checker&lt;/title&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script defer src="/_vercel/insights/script.js"&gt;&lt;/script&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9294579337108247" crossorigin="anonymous"&gt;&lt;/script&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>:root { --red: #EC2227; --white: #F5F5F0; --black: #0A0A0A; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body { background-color: var(--black); color: var(--white); font-family: 'Nunito', sans-serif; min-height: 100vh; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(-55deg, transparent, transparent 60px, rgba(232,0,45,0.025) 60px, rgba(232,0,45,0.025) 62px); pointer-events: none; z-index: 0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.content { position: relative; z-index: 1; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.flag-bar { height: 6px; background: repeating-linear-gradient(90deg, var(--black) 0px, var(--black) 12px, var(--white) 12px, var(--white) 24px); width: 100%; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.red-bar { height: 4px; background: var(--red); width: 100%; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>header { padding: 2rem 1.5rem 1rem; text-align: center; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>h1 { font-size: clamp(2.8rem, 10vw, 5.5rem); font-weight: 900; font-style: italic; line-height: 0.9; text-transform: uppercase; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.red { color: var(--red); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>#batchInput { width: 100%; background: #111; border: 1px solid #2a2a2a; border-left: 3px solid var(--red); color: var(--white); font-weight: 800; font-size: 1.6rem; padding: 1rem 2.2rem; outline: none; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.btn-check { background: var(--red); color: var(--white); font-weight: 800; text-transform: uppercase; padding: 0.85rem 1.5rem; width: 100%; margin-top: 1rem; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>#resultBox { margin-top: 1.25rem; padding: 1.25rem; border-left: 4px solid transparent; background: #111; display: none; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>#resultBox.danger { border-left-color: var(--red); background: rgba(232,0,45,0.06); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>#resultBox.safe { border-left-color: #00c853; background: rgba(0,200,83,0.05); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.cta-btn { display: block; width: 100%; background: var(--white); color: var(--black); font-weight: 800; padding: 1rem; text-align: center; text-decoration: none; margin-top: 1rem; border-left: 4px solid var(--red); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="flag-bar"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="red-bar"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="content max-w-lg mx-auto px-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="min-h-[90px] flex items-center justify-center bg-gray-900/50 my-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;header&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;p class="text-red-500 font-bold uppercase tracking-widest text-xs mb-2"&gt;⚑ F1 × KitKat · 2026 Detector&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h1&gt;Stolen&lt;br&gt;&lt;span class="red"&gt;Break&lt;/span&gt;&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="bg-[#0f0f0f] border border-[#1e1e1e] p-4 flex items-center gap-4 my-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span class="text-[0.7rem] text-gray-500 uppercase font-bold"&gt;⚠ Stolen&lt;br&gt;Range&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span class="text-red-600 font-black text-lg"&gt;6085XXXXXX — 6095XXXXXX&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="space-y-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;label class="text-xs text-gray-500 font-bold uppercase tracking-widest"&gt;Enter 10-Digit Batch Code&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input id="batchInput" type="text" maxlength="10" placeholder="6085123456" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="flex gap-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn-check" onclick="checkCode()"&gt;▶ Run Check&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div id="resultBox"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="resultStatus" class="font-black italic text-2xl uppercase"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="resultDetail" class="text-sm text-gray-500 font-semibold uppercase mt-2"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div id="relatedSearch" class="my-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div id="ctaWrap" class="hidden"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;a id="amazonBtn" href="#" target="_blank" class="cta-btn"&gt;🛒 Secure a Legal Break&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;p class="text-[10px] text-gray-600 text-center mt-2 uppercase tracking-tighter"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>As an Amazon Associate, I earn from qualifying purchases.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section class="mt-12 text-left border-t border-gray-800 pt-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h2 class="text-red-600 font-black italic text-xl uppercase mb-4"&gt;The 2026 KitKat Heist&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;p class="text-xs text-gray-400 leading-relaxed mb-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>In early 2026, the confectionery world was shocked by a high-stakes heist targeting the limited edition Formula 1 KitKat shipment. Thousands of bars featuring unique racing-inspired molds were intercepted during transit.<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;p class="text-xs text-gray-400 leading-relaxed mb-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>Authorities have identified specific batch ranges that were part of the stolen cargo. This tool was developed to help consumers verify their purchases and ensure they are supporting legitimate supply chains.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;footer class="mt-20 pb-10 text-center"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="mb-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;select id="regionSelect" onchange="updateLinks()" class="bg-black border border-gray-800 text-gray-500 text-xs p-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;option value="US"&gt;Region: United States&lt;/option&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;option value="UK"&gt;Region: United Kingdom / EU&lt;/option&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;option value="INTL"&gt;Region: Global / India&lt;/option&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;p class="text-[10px] text-gray-700 uppercase tracking-widest"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>Built by Sanidhya · © 2026 · &lt;a href="#" class="text-red-600"&gt;GitHub&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/p&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="w-full max-w-4xl mx-auto my-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const links = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>US: "https://amzn.to/3PG9EdN",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>UK: "https://www.amazon.co.uk/s?k=KitKat+F1",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>INTL: "https://www.amazon.com/s?k=Formula+1+merchandise"</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function updateLinks() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const region = document.getElementById('regionSelect').value;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('amazonBtn').href = links[region];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>window.onload = () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (tz.includes("America")) document.getElementById('regionSelect').value = "US";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>else if (tz.includes("Europe") || tz.includes("London")) document.getElementById('regionSelect').value = "UK";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>else document.getElementById('regionSelect').value = "INTL";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>updateLinks();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function checkCode() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const val = document.getElementById('batchInput').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (!val) return;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const prefix = parseInt(val.substring(0, 4));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const res = document.getElementById('resultBox');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const stat = document.getElementById('resultStatus');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const det = document.getElementById('resultDetail');</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>res.style.display = 'block';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('ctaWrap').classList.remove('hidden');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (prefix &gt;= 6085 &amp;&amp; prefix &lt;= 6095) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>window.va('event', { name: 'BatchChecked', result: 'stolen', prefix: String(prefix) });</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>res.className = 'danger p-4 border-l-4';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>stat.innerText = "🚨 Stolen Cargo";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>stat.className = "text-red-600 font-black italic text-2xl uppercase";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>det.innerText = "This batch falls within the reported stolen range. Do not consume.";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>window.va('event', { name: 'BatchChecked', result: 'safe', prefix: String(prefix) });</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>res.className = 'safe p-4 border-l-4';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>stat.innerText = "✅ Verified Safe";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>stat.className = "text-green-500 font-black italic text-2xl uppercase";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>det.innerText = "This batch is verified as part of the legitimate global supply chain.";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
 </body>
 </html>
