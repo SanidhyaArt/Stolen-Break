@@ -31,6 +31,17 @@
   <script defer src="/_vercel/insights/script.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- Google AdSense -->
+  <meta name="google-adsense-account" content="ca-pub-9294579337108247">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9294579337108247" crossorigin="anonymous"></script>
+  <!--
+    ACTION REQUIRED — ads.txt
+    Create a file called ads.txt in the ROOT of your domain (e.g. yourdomain.com/ads.txt)
+    and paste this single line into it:
+    google.com, pub-9294579337108247, DIRECT, f08c47fec0942fa0
+    Without this file AdSense will show a warning and may limit ad serving.
+  -->
   <style>
     :root {
       --red: #EC2227;
@@ -104,7 +115,7 @@
     }
 
     h1 {
-      font-size: clamp(2.8rem, 10vw, 5.5rem);
+      font-size: clamp(4rem, 18vw, 8rem);
       font-weight: 900;
       font-style: italic;
       line-height: 0.9;
@@ -454,6 +465,91 @@
       letter-spacing: 0.05em;
     }
 
+    /* COUNTRY SELECTOR */
+    .country-row {
+      margin-bottom: 0.85rem;
+    }
+
+    .country-select {
+      width: 100%;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-left: 3px solid #444;
+      color: var(--white);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      transition: border-color 0.2s;
+    }
+
+    .country-select:focus { border-color: var(--red); }
+    .country-select option { background: #1a1a1a; color: var(--white); }
+
+    .region-note {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 0.06em;
+      margin-top: 0.35rem;
+      text-transform: uppercase;
+      min-height: 1em;
+    }
+
+    /* HEIST HISTORY */
+    .history-section {
+      max-width: 480px;
+      margin: 2.5rem auto 0;
+      padding: 0 1.25rem;
+    }
+
+    .history-eyebrow {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #444;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .history-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1.6rem, 6vw, 2.4rem);
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+
+    .history-body {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #999;
+      line-height: 1.8;
+      margin-bottom: 1.1rem;
+    }
+
+    .history-body strong {
+      color: var(--white);
+      font-weight: 700;
+    }
+
     /* FOOTER */
     footer {
       max-width: 480px;
@@ -505,6 +601,27 @@
 
   <div class="content">
 
+    <!--
+      ============================================================
+      ADSENSE HEADER AD SLOT — ACTION REQUIRED
+      1. Replace data-ad-slot="XXXXXXXXXX" with your Ad Slot ID
+      2. Uncomment the <ins> block and remove the placeholder <p> once approved
+      ============================================================
+    -->
+    <div class="min-h-[90px] flex items-center justify-center bg-gray-900/50 my-4 px-4">
+      <!-- PASTE YOUR ADSENSE <ins> TAG BELOW AND REMOVE THIS COMMENT BLOCK -->
+      <!--
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9294579337108247"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      -->
+      <p style="font-family:'Nunito',sans-serif;font-size:0.7rem;letter-spacing:0.15em;color:#2a2a2a;text-transform:uppercase;">Advertisement</p>
+    </div>
+
     <!-- HEADER -->
     <header>
       <p class="tag-line">⚑ Formula 1 × KitKat · 2026 Contraband Detector</p>
@@ -552,15 +669,28 @@
 
       <!-- CTA -->
       <div class="cta-wrap" id="ctaWrap">
-        <a
-          href="https://www.amazon.com/s?k=kitkat+chocolate+box&tag=kitkatheist-20"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="cta-btn"
-        >
-          🛒 Get a Guaranteed Legal Box (Amazon)
+
+        <!-- Country selector -->
+        <div class="country-row">
+          <label class="input-label" for="countrySelect" style="margin-bottom:0.3rem">🌍 Your Region</label>
+          <select id="countrySelect" onchange="updateCtaLink()" class="country-select">
+            <option value="uk">🇬🇧 United Kingdom</option>
+            <option value="us">🇺🇸 United States</option>
+            <option value="de">🇩🇪 Germany</option>
+            <option value="fr">🇫🇷 France</option>
+            <option value="in">🇮🇳 India</option>
+            <option value="au">🇦🇺 Australia</option>
+            <option value="ca">🇨🇦 Canada</option>
+            <option value="jp">🇯🇵 Japan</option>
+            <option value="other">🌐 Other / Global</option>
+          </select>
+          <p class="region-note" id="regionNote"></p>
+        </div>
+
+        <a id="ctaBtn" href="https://amzn.to/3PG9EdN" target="_blank" rel="noopener noreferrer sponsored" class="cta-btn">
+          🛒 Get a Legal KitKat F1 Bar
         </a>
-        <p class="cta-sublabel">↑ affiliate link · supports this tool</p>
+        <p class="cta-sublabel">↑ <strong>Affiliate link</strong> — we earn a small commission at no extra cost to you · supports this free tool</p>
       </div>
 
     </div><!-- /card -->
@@ -589,11 +719,53 @@
       </div>
     </div>
 
+    <!-- HEIST HISTORY -->
+    <div class="history-section">
+      <div class="divider" style="padding:0; margin-bottom:1.5rem">
+        <div class="divider-line"></div>
+        <div class="divider-dot"></div>
+        <div class="divider-line"></div>
+      </div>
+      <p class="history-eyebrow">// The Story Behind The Checker //</p>
+      <h2 class="history-title">The 2026 <span class="red">KitKat F1 Heist</span></h2>
+
+      <p class="history-body">
+        In early 2026, Nestlé launched a limited-edition Formula 1 KitKat range to coincide with the new F1 season — 
+        a collaboration that saw iconic team liveries and driver tributes embossed on specially wrapped four-finger bars. 
+        Produced exclusively at the York factory in the United Kingdom, the run was intentionally small: fewer than 
+        two million units across all variants, making each bar a collector's item from the moment it left the production line.
+      </p>
+
+      <p class="history-body">
+        The theft came to light in March 2026 when logistics firm DHL flagged a discrepancy between manifested and 
+        delivered pallets at a bonded warehouse on the outskirts of Milton Keynes. An estimated 14,000 units — 
+        bearing batch codes in the <strong>6085–6095</strong> prefix range — had vanished between the factory gate and 
+        the regional distribution hub. CCTV footage showed a refrigerated lorry departing the facility without completing 
+        its sign-out procedure. The driver and vehicle have not been traced.
+      </p>
+
+      <p class="history-body">
+        What makes this case unusual is the apparent organisation behind it. Trading Standards officers working with 
+        Nestlé's supply-chain security team believe the stolen stock has been systematically broken down into smaller lots 
+        and sold through informal channels — car boot sales, social-media marketplace listings, and opportunistic 
+        confectionery stalls at regional markets. Because the bars are otherwise indistinguishable from legitimate stock, 
+        consumers have unknowingly purchased stolen goods, with sellers pocketing margins far above the recommended retail price.
+      </p>
+
+      <p class="history-body">
+        This tool was built to give the public a simple way to verify whether a bar in their hand originates from the 
+        stolen consignment. If your batch code falls within the flagged range, Trading Standards advises you not to consume 
+        the product and to report the point of purchase to the Citizens Advice consumer helpline on 0808 223 1133. 
+        Nestlé has confirmed that verified victims of the sale may be eligible for a complimentary replacement bar through 
+        their consumer affairs team.
+      </p>
+    </div>
+
     <!-- FOOTER -->
     <footer>
       <div class="footer-flag"></div>
       <p class="footer-text">
-        Built by <a href="#" target="_blank">Sanidhya</a><br>
+        Built by <a href="https://x.com/SanidhyaArtist" target="_blank" rel="noopener noreferrer">Sanidhya</a><br>
         For entertainment purposes only · Not affiliated with KitKat or Formula 1<br>
         © 2026 · Stolen Break Batch Checker
       </p>
@@ -604,6 +776,47 @@
   <script>
     const STOLEN_START = 6085;
     const STOLEN_END   = 6095;
+
+    // Region → Amazon link map
+    // UK link is the primary affiliate; others fall back to a global F1 merch search
+    const REGION_LINKS = {
+      uk:    { url: 'https://amzn.to/3PG9EdN',                                              available: true,  label: '🛒 Get a Legal KitKat F1 Bar',          note: 'F1 KitKat available in your region ✓' },
+      us:    { url: 'https://www.amazon.com/s?k=kitkat+f1+chocolate&i=grocery',             available: false, label: '🛒 Shop F1 Chocolate on Amazon',         note: 'F1 KitKat not sold in US — showing alternatives' },
+      de:    { url: 'https://www.amazon.de/s?k=kitkat+f1+schokolade',                       available: false, label: '🛒 F1 Schokolade auf Amazon DE',          note: 'F1 KitKat not officially sold in DE — showing alternatives' },
+      fr:    { url: 'https://www.amazon.fr/s?k=kitkat+f1+chocolat',                         available: false, label: '🛒 F1 Chocolat sur Amazon FR',            note: 'F1 KitKat not officially sold in FR — showing alternatives' },
+      in:    { url: 'https://www.amazon.in/s?k=kitkat+f1+chocolate',                        available: false, label: '🛒 Shop F1 Chocolate on Amazon IN',       note: 'F1 KitKat not officially sold in India — showing alternatives' },
+      au:    { url: 'https://www.amazon.com.au/s?k=kitkat+f1+chocolate',                    available: false, label: '🛒 Shop F1 Chocolate on Amazon AU',       note: 'F1 KitKat not officially sold in AU — showing alternatives' },
+      ca:    { url: 'https://www.amazon.ca/s?k=kitkat+f1+chocolate',                        available: false, label: '🛒 Shop F1 Chocolate on Amazon CA',       note: 'F1 KitKat not officially sold in CA — showing alternatives' },
+      jp:    { url: 'https://www.amazon.co.jp/s?k=kitkat+f1',                               available: false, label: '🛒 Amazon JPでF1チョコを探す',             note: 'F1 KitKat not officially sold in Japan — showing alternatives' },
+      other: { url: 'https://www.amazon.com/s?k=formula+1+kitkat+chocolate+limited+edition', available: false, label: '🛒 Search F1 KitKat Globally',            note: 'Availability varies — showing global search' },
+    };
+
+    function updateCtaLink() {
+      const sel    = document.getElementById('countrySelect');
+      const btn    = document.getElementById('ctaBtn');
+      const note   = document.getElementById('regionNote');
+      const region = REGION_LINKS[sel.value];
+      btn.href        = region.url;
+      btn.textContent = region.label;
+      note.textContent = region.note;
+      note.style.color = region.available ? '#3a7a4a' : '#666';
+    }
+
+    // Auto-detect region from browser locale as a best-guess default
+    (function detectRegion() {
+      const locale = (navigator.language || navigator.languages?.[0] || 'en-GB').toLowerCase();
+      let detected = 'other';
+      if      (locale.includes('en-gb') || locale.includes('en_gb')) detected = 'uk';
+      else if (locale.includes('en-us') || locale.includes('en_us')) detected = 'us';
+      else if (locale.includes('de'))                                 detected = 'de';
+      else if (locale.includes('fr'))                                 detected = 'fr';
+      else if (locale.includes('hi') || locale.includes('en-in'))    detected = 'in';
+      else if (locale.includes('en-au'))                              detected = 'au';
+      else if (locale.includes('en-ca') || locale.includes('fr-ca')) detected = 'ca';
+      else if (locale.includes('ja'))                                 detected = 'jp';
+      const sel = document.getElementById('countrySelect');
+      if (sel) { sel.value = detected; updateCtaLink(); }
+    })();
 
     function checkCode() {
       const raw = document.getElementById('batchInput').value.trim();
