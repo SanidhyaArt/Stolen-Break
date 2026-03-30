@@ -30,7 +30,7 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --red: #EC2227;
@@ -46,7 +46,7 @@
     body {
       background-color: var(--black);
       color: var(--white);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Nunito', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -94,9 +94,10 @@
     }
 
     .tag-line {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
       color: var(--red);
       text-transform: uppercase;
       margin-bottom: 0.4rem;
@@ -114,10 +115,11 @@
     h1 span.red { color: var(--red); }
 
     .subtitle {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
       color: #666;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       margin-top: 0.75rem;
       text-transform: uppercase;
     }
@@ -143,11 +145,12 @@
 
     /* INPUT AREA */
     .input-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: #555;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: #777;
       text-transform: uppercase;
-      font-family: 'Share Tech Mono', monospace;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
       margin-bottom: 0.5rem;
       display: block;
     }
@@ -173,8 +176,9 @@
       border: 1px solid #2a2a2a;
       border-left: 3px solid var(--red);
       color: var(--white);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 1.4rem;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
       letter-spacing: 0.15em;
       padding: 1rem 1rem 1rem 2.2rem;
       outline: none;
@@ -211,11 +215,10 @@
       background: var(--red);
       color: var(--white);
       border: none;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-style: italic;
-      font-size: 1.1rem;
-      letter-spacing: 0.06em;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       padding: 0.85rem 1.5rem;
       cursor: pointer;
@@ -236,11 +239,12 @@
 
     .btn-clear {
       background: transparent;
-      color: #555;
+      color: #666;
       border: 1px solid #2a2a2a;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       padding: 0.85rem 1rem;
       cursor: pointer;
@@ -289,12 +293,13 @@
     .result-status.safe-text { color: #00c853; }
 
     .result-detail {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.68rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
       color: #666;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .result-detail.danger-detail { color: #aa3333; }
@@ -333,11 +338,10 @@
       color: var(--black);
       text-decoration: none;
       text-align: center;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-style: italic;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
       font-size: 1rem;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       padding: 1rem;
       transition: background 0.15s;
@@ -356,10 +360,11 @@
     .cta-btn:hover { background: #ddd; }
 
     .cta-sublabel {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.6rem;
-      color: #444;
-      letter-spacing: 0.12em;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 0.08em;
       text-align: center;
       margin-top: 0.4rem;
       text-transform: uppercase;
@@ -373,11 +378,12 @@
     }
 
     .how-title {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: #444;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: #555;
       text-transform: uppercase;
-      font-family: 'Share Tech Mono', monospace;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
       margin-bottom: 1rem;
       text-align: center;
     }
@@ -404,13 +410,14 @@
     }
 
     .how-label {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.58rem;
-      color: #555;
-      letter-spacing: 0.08em;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #666;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       margin-top: 0.3rem;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     /* RANGE BADGE */
@@ -430,17 +437,19 @@
     }
 
     .range-label {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.6rem;
-      color: #444;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #555;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       flex-shrink: 0;
     }
 
     .range-codes {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.85rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
       color: var(--red);
       letter-spacing: 0.05em;
     }
@@ -464,10 +473,11 @@
     }
 
     .footer-text {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.6rem;
-      color: #333;
-      letter-spacing: 0.15em;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #444;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       line-height: 2;
     }
