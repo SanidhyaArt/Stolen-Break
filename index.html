@@ -1,0 +1,694 @@
+<!--
+  Stolen Break — F1 Batch Checker
+  MIT License
+  Copyright (c) 2026 Sanidhya
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stolen Break — F1 Batch Checker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --red: #EC2227;
+      --red-dark: #b5181c;
+      --white: #F5F5F0;
+      --black: #0A0A0A;
+      --gray: #1A1A1A;
+      --stripe: #111111;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--black);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Racing stripes background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -55deg,
+        transparent,
+        transparent 60px,
+        rgba(232,0,45,0.025) 60px,
+        rgba(232,0,45,0.025) 62px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content { position: relative; z-index: 1; }
+
+    /* TOP FLAG STRIPE */
+    .flag-bar {
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--black) 0px, var(--black) 12px,
+        var(--white) 12px, var(--white) 24px
+      );
+      width: 100%;
+    }
+
+    /* RED ACCENT TOP BAR */
+    .red-bar {
+      height: 4px;
+      background: var(--red);
+      width: 100%;
+    }
+
+    /* HEADER */
+    header {
+      padding: 2rem 1.5rem 1rem;
+      text-align: center;
+    }
+
+    .tag-line {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 10vw, 5.5rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.9;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span.red { color: var(--red); }
+
+    .subtitle {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: #666;
+      letter-spacing: 0.15em;
+      margin-top: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.5rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .divider-line { flex: 1; height: 1px; background: #2a2a2a; }
+    .divider-dot { width: 6px; height: 6px; background: var(--red); transform: rotate(45deg); flex-shrink: 0; }
+
+    /* MAIN CARD */
+    .card {
+      max-width: 480px;
+      margin: 1.5rem auto 0;
+      padding: 0 1.25rem;
+    }
+
+    /* INPUT AREA */
+    .input-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: #555;
+      text-transform: uppercase;
+      font-family: 'Share Tech Mono', monospace;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper::before {
+      content: '▶';
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--red);
+      font-size: 0.7rem;
+      pointer-events: none;
+    }
+
+    #batchInput {
+      width: 100%;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-left: 3px solid var(--red);
+      color: var(--white);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.4rem;
+      letter-spacing: 0.15em;
+      padding: 1rem 1rem 1rem 2.2rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+      border-radius: 0;
+      text-transform: uppercase;
+    }
+
+    #batchInput::placeholder {
+      color: #333;
+      letter-spacing: 0.1em;
+    }
+
+    #batchInput:focus {
+      border-color: var(--red);
+      background: #161616;
+      box-shadow: 0 0 0 1px rgba(232,0,45,0.2), 0 4px 24px rgba(232,0,45,0.08);
+    }
+
+    /* Remove number input arrows */
+    #batchInput::-webkit-outer-spin-button,
+    #batchInput::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    /* BUTTONS */
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+    }
+
+    .btn-check {
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-check::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    }
+
+    .btn-check:hover { background: #f5373c; }
+    .btn-check:active { transform: scale(0.97); }
+
+    .btn-clear {
+      background: transparent;
+      color: #555;
+      border: 1px solid #2a2a2a;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .btn-clear:hover { color: var(--white); border-color: #555; }
+
+    /* RESULT BOX */
+    #resultBox {
+      margin-top: 1.25rem;
+      padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+      border-left: 4px solid transparent;
+      background: #111;
+      display: none;
+      animation: slideIn 0.25s ease;
+      position: relative;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #resultBox.danger {
+      border-left-color: var(--red);
+      background: rgba(232,0,45,0.06);
+    }
+
+    #resultBox.safe {
+      border-left-color: #00c853;
+      background: rgba(0,200,83,0.05);
+    }
+
+    .result-status {
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .result-status.danger-text { color: var(--red); }
+    .result-status.safe-text { color: #00c853; }
+
+    .result-detail {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      color: #666;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.6;
+    }
+
+    .result-detail.danger-detail { color: #aa3333; }
+    .result-detail.safe-detail { color: #3a7a4a; }
+
+    /* SCANLINE BLINK on danger */
+    .scanline-danger {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(232,0,45,0.04) 3px,
+        rgba(232,0,45,0.04) 4px
+      );
+      pointer-events: none;
+      animation: scanBlink 1.5s steps(1) infinite;
+    }
+
+    @keyframes scanBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* CTA BUTTON */
+    .cta-wrap {
+      margin-top: 1.25rem;
+      display: none;
+    }
+
+    .cta-btn {
+      display: block;
+      width: 100%;
+      background: var(--white);
+      color: var(--black);
+      text-decoration: none;
+      text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1rem;
+      transition: background 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--red);
+    }
+
+    .cta-btn:hover { background: #ddd; }
+
+    .cta-sublabel {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: #444;
+      letter-spacing: 0.12em;
+      text-align: center;
+      margin-top: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    /* HOW IT WORKS */
+    .how-section {
+      max-width: 480px;
+      margin: 2rem auto 0;
+      padding: 0 1.25rem;
+    }
+
+    .how-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: #444;
+      text-transform: uppercase;
+      font-family: 'Share Tech Mono', monospace;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .how-card {
+      background: #111;
+      border-top: 2px solid #222;
+      padding: 0.85rem 0.75rem;
+      text-align: center;
+    }
+
+    .how-num {
+      font-size: 1.6rem;
+      font-weight: 900;
+      font-style: italic;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .how-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      color: #555;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+      line-height: 1.4;
+    }
+
+    /* RANGE BADGE */
+    .range-badge {
+      max-width: 480px;
+      margin: 1.25rem auto 0;
+      padding: 0 1.25rem;
+    }
+
+    .range-inner {
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .range-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      flex-shrink: 0;
+    }
+
+    .range-codes {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--red);
+      letter-spacing: 0.05em;
+    }
+
+    /* FOOTER */
+    footer {
+      max-width: 480px;
+      margin: 2.5rem auto 0;
+      padding: 0 1.25rem 2rem;
+      text-align: center;
+    }
+
+    .footer-flag {
+      height: 3px;
+      background: repeating-linear-gradient(
+        90deg,
+        #222 0px, #222 8px,
+        #444 8px, #444 16px
+      );
+      margin-bottom: 1rem;
+    }
+
+    .footer-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: #333;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      line-height: 2;
+    }
+
+    .footer-text a {
+      color: var(--red);
+      text-decoration: none;
+    }
+
+    .footer-text a:hover { text-decoration: underline; }
+
+    /* Pulse animation for the danger icon */
+    @keyframes pulse-red {
+      0%, 100% { text-shadow: 0 0 8px rgba(232,0,45,0.8); }
+      50% { text-shadow: 0 0 24px rgba(232,0,45,1), 0 0 48px rgba(232,0,45,0.4); }
+    }
+
+    .pulse-danger { animation: pulse-red 1.2s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+
+  <div class="flag-bar"></div>
+  <div class="red-bar"></div>
+
+  <div class="content">
+
+    <!-- HEADER -->
+    <header>
+      <p class="tag-line">⚑ Formula 1 × KitKat · 2026 Contraband Detector</p>
+      <h1>Stolen<br><span class="red">Break</span></h1>
+      <p class="subtitle">// Stolen F1 Batch Code Verifier //</p>
+    </header>
+
+    <!-- RANGE INFO -->
+    <div class="range-badge">
+      <div class="range-inner">
+        <span class="range-label">⚠ Stolen<br>Range</span>
+        <span class="range-codes">6085XXXXXX — 6095XXXXXX</span>
+      </div>
+    </div>
+
+    <!-- MAIN CHECKER CARD -->
+    <div class="card">
+
+      <div style="margin-top:1.5rem">
+        <label class="input-label" for="batchInput">Enter 10-Digit Batch Code</label>
+        <div class="input-wrapper">
+          <input
+            id="batchInput"
+            type="text"
+            maxlength="10"
+            placeholder="e.g. 6085123456"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+            inputmode="text"
+          />
+        </div>
+        <div class="btn-row">
+          <button class="btn-check" onclick="checkCode()">▶ Run Check</button>
+          <button class="btn-clear" onclick="clearAll()">✕ Clear</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultBox">
+        <div id="scanlineEl" class="scanline-danger" style="display:none"></div>
+        <div id="resultStatus" class="result-status"></div>
+        <div id="resultDetail" class="result-detail"></div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-wrap" id="ctaWrap">
+        <a
+          href="https://www.amazon.com/s?k=kitkat+chocolate+box&tag=kitkatheist-20"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cta-btn"
+        >
+          🛒 Get a Guaranteed Legal Box (Amazon)
+        </a>
+        <p class="cta-sublabel">↑ affiliate link · supports this tool</p>
+      </div>
+
+    </div><!-- /card -->
+
+    <!-- HOW IT WORKS -->
+    <div class="how-section">
+      <div class="divider" style="padding:0; margin-bottom:1rem">
+        <div class="divider-line"></div>
+        <div class="divider-dot"></div>
+        <div class="divider-line"></div>
+      </div>
+      <p class="how-title">// How It Works //</p>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-num">01</div>
+          <div class="how-label">Find batch code on wrapper</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num">02</div>
+          <div class="how-label">Enter full 10-digit code above</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num">03</div>
+          <div class="how-label">Instant stolen range verdict</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-flag"></div>
+      <p class="footer-text">
+        Built by <a href="#" target="_blank">Sanidhya</a><br>
+        For entertainment purposes only · Not affiliated with KitKat or Formula 1<br>
+        © 2026 · Stolen Break Batch Checker
+      </p>
+    </footer>
+
+  </div><!-- /content -->
+
+  <script>
+    const STOLEN_START = 6085;
+    const STOLEN_END   = 6095;
+
+    function checkCode() {
+      const raw = document.getElementById('batchInput').value.trim();
+      const resultBox    = document.getElementById('resultBox');
+      const resultStatus = document.getElementById('resultStatus');
+      const resultDetail = document.getElementById('resultDetail');
+      const scanlineEl   = document.getElementById('scanlineEl');
+      const ctaWrap      = document.getElementById('ctaWrap');
+
+      // Validate
+      if (!raw) {
+        flashInput();
+        return;
+      }
+
+      if (raw.length < 4) {
+        showResult('danger', '⚠ INVALID CODE', 'Enter at least 4 digits to identify batch prefix.', false);
+        ctaWrap.style.display = 'block';
+        return;
+      }
+
+      const prefix = parseInt(raw.substring(0, 4), 10);
+
+      if (prefix >= STOLEN_START && prefix <= STOLEN_END) {
+        showResult(
+          'danger',
+          '🚨 POTENTIAL STOLEN CARGO',
+          `Batch prefix ${prefix} falls within the 2026 F1 KitKat theft range (6085–6095).\nDo NOT consume · Report to authorities.`,
+          true
+        );
+      } else {
+        showResult(
+          'safe',
+          '✅ VERIFIED SAFE',
+          `Batch prefix ${prefix} is outside the stolen cargo range.\nYour KitKat appears to be from a legitimate supply chain.`,
+          false
+        );
+      }
+
+      ctaWrap.style.display = 'block';
+    }
+
+    function showResult(type, status, detail, showScanline) {
+      const resultBox    = document.getElementById('resultBox');
+      const resultStatus = document.getElementById('resultStatus');
+      const resultDetail = document.getElementById('resultDetail');
+      const scanlineEl   = document.getElementById('scanlineEl');
+
+      resultBox.className = '';
+      resultBox.classList.add(type);
+
+      resultStatus.className = 'result-status';
+      resultDetail.className = 'result-detail';
+
+      if (type === 'danger') {
+        resultStatus.classList.add('danger-text', 'pulse-danger');
+        resultDetail.classList.add('danger-detail');
+        scanlineEl.style.display = showScanline ? 'block' : 'none';
+      } else {
+        resultStatus.classList.add('safe-text');
+        resultDetail.classList.add('safe-detail');
+        scanlineEl.style.display = 'none';
+      }
+
+      resultStatus.textContent = status;
+      resultDetail.textContent = detail;
+
+      // Re-trigger animation
+      resultBox.style.display = 'none';
+      void resultBox.offsetWidth;
+      resultBox.style.display = 'block';
+    }
+
+    function clearAll() {
+      document.getElementById('batchInput').value = '';
+      const resultBox = document.getElementById('resultBox');
+      resultBox.style.display = 'none';
+      resultBox.className = '';
+      document.getElementById('ctaWrap').style.display = 'none';
+      document.getElementById('batchInput').focus();
+    }
+
+    function flashInput() {
+      const input = document.getElementById('batchInput');
+      input.style.borderColor = '#ff4444';
+      setTimeout(() => { input.style.borderColor = ''; }, 600);
+      input.focus();
+    }
+
+    // Enter key support
+    document.getElementById('batchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkCode();
+    });
+
+    // Auto-check on 10 digits entered
+    document.getElementById('batchInput').addEventListener('input', function() {
+      if (this.value.trim().length === 10) {
+        setTimeout(checkCode, 200);
+      }
+    });
+  </script>
+</body>
+</html>
